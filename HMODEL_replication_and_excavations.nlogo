@@ -13,39 +13,21 @@ patches-own[
 ]
 
 
-
-
-
 to setup
-
 clear-all
-
-random-seed seed  ;; always need a seed variable for model replicability
-
+random-seed seed ;; always need a seed variable for model replicability
 set list-of-hearths-on-surface [] ;; create list for data collection
-
 set list-of-hearths-excavated [] ;; create list for data collection
-
 set years_BP 2000 ;; Set this variable to simulate the late Holocene time period.
-
 ask patches [
   set sediment_ages (list 2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030 2031 2032 2033 2034 2035 2036 2037 2038 2039 2040) ;; create list of sedimentary layers older than human occupation of the landscape
 ]
-
 reset-ticks
-
 end
 
-
-
-
-
 to go
-
   tick ;; time passes
-
   set years_BP 2000 - ticks ;; set years BP value
-
 if ticks <= 1800 ;; condition simulating transition from prehistoric to historic hearth creation
 [
     crt 5
@@ -54,19 +36,14 @@ if ticks <= 1800 ;; condition simulating transition from prehistoric to historic
      set hearth_age years_BP ;; give turtles a variable (hearth) with the date they are created
    ]
 ]
-
  if ticks mod event_interval = 0 ;; set event interval to simulate large scale floods
   [event]
-
   if ticks = 2000 ;; or when time is equivalent to the present
  [
     collectdata  ;;
     stop
   ]
 end
-
-
-
 
 to event
   ask patches [
@@ -75,44 +52,28 @@ to event
     ifelse random-float 1 < erosion_proportion
     [erosion] ;; remove a sedimentary layer
     [deposition] ;; deposit a layer
-
   ]
   ]
 end
-
-
-
 
 to erosion
 if length sediment_ages > 0
 [
 ask turtles-here with [hearth_age <= item 0 sediment_ages] ;; select hearths on the surface
 [
-
-  die ;;Hearths that are the same age or younger than the most recent sedimentary layer (i.e. on the surface) are eroded away and dispersed.
+  die ;; hearths that are the same age or younger than the most recent sedimentary layer (i.e. on the surface) are eroded away and dispersed.
   ]
-
-;;show sediment_ages    ;;for testing
-
-
-if length sediment_ages > 0
-    [
+;;show sediment_ages    ;; for testing
   set sediment_ages remove-item 0 sediment_ages ;; remove a sedimentary layer
-    ]
 ;;show sediment_ages ;;for testing
 ]
-
 end
-
-
 
 to deposition
-  ;;show sediment_ages ;;for testing
+  ;;show sediment_ages ;; for testing
   set sediment_ages fput years_BP sediment_ages ;; add a layer
-  ;;show sediment_ages ;;for testing
+  ;;show sediment_ages ;; for testing
 end
-
-
 
 to collectdata
 
@@ -122,25 +83,23 @@ ask turtles with [hearth_age <= item 0 sediment_ages]
 [
 set list-of-hearths-on-surface fput hearth_age list-of-hearths-on-surface ;; list-of-hearths-on-surface is a global list of all hearths on the surface at the present
 ]
-set-current-directory "C:\\Users\\Molly\\Documents\\Archaeology\\PhD\\2019\\2019\\Modeling Paper\\"
-file-open "survey_200_1.csv"
+set-current-directory user-directory ;; allow user to set output file directory
+file-open "HMODELsurvey_200_1.csv" ;; edit this filename for your experiments
 if length list-of-hearths-on-surface > 99
 [
   let sample-surface-hearths n-of 100 list-of-hearths-on-surface ;; randomly pull 100 hearths from all hearths on the surface
   set sample-surface-hearths sort sample-surface-hearths ;;this sorts them in ascending order
-  output-write sample-surface-hearths  ;;for testing
-
-  set-plot-pen-mode 2  ;;this plots to the interface
+  output-write sample-surface-hearths  ;; for testing
+  set-plot-pen-mode 2  ;; plots to the interface
   let y 1
   foreach sample-surface-hearths
   [ ?1 ->
    plotxy ?1 y
    set y y + 1
   ]
-
-  foreach sample-surface-hearths  ;;this writes it out to the .csv file
+  foreach sample-surface-hearths  ;; writes it out to the .csv file
   [ ?1 ->
-  file-write ?1 file-write ","  ;;you can delete "file-write ","" if you want a space separated file. As it stands, you'll probably have to go into the .csv file and replace all of the " with nothing in order to import into excel or R nicely--this added find and replace only takes a second.
+  file-write ?1 file-write ","  ;; can delete "file-write ","" if you want a space separated file. As it stands, you'll probably have to go into the .csv file and replace all of the " with nothing in order to import into excel or R nicely--this added find and replace only takes a second.
   ]
   file-print "" file-print ""
 ]
@@ -149,8 +108,6 @@ if length list-of-hearths-on-surface > 99
 ;]
 file-close
 ]
-
-
 
 if experiment = "excavation-10" ;; adding 10 random test units with data to surface survey data
 [
@@ -165,15 +122,13 @@ ask turtles with [hearth_age <= item 0 sediment_ages]
 [
   set list-of-hearths-on-surface fput hearth_age list-of-hearths-on-surface
 ]
-
-file-open "HMODEL13_excavation-10_200_0.csv"
-
+set-current-directory user-directory ;; allow user to set output file directory
+file-open "HMODEL13excavation-10_200_0.csv" ;;edit this filename for your experiments
 if length list-of-hearths-on-surface > 99 and length list-of-hearths-excavated >= 0
 [
   let sample-hearths n-of 100 sentence (list-of-hearths-on-surface) (list-of-hearths-excavated) ;; combining surface data and excavation data
   set sample-hearths sort sample-hearths ;;this sorts them in ascending order
 ;;show sample-hearths
-
   set-plot-pen-mode 2  ;;this plots to the interface
   let y 1
   foreach sample-hearths
@@ -181,10 +136,9 @@ if length list-of-hearths-on-surface > 99 and length list-of-hearths-excavated >
    plotxy ?1 y
    set y y + 1
   ]
-
-  foreach sample-hearths  ;;this writes it out to the .csv file
+  foreach sample-hearths  ;;s writes it out to the .csv file
   [ ?1 ->
-  file-write ?1 file-write ","  ;;you can delete "file-write ","" if you want a space separated file. As it stands, you'll probably have to go into the .csv file and replace all of the " with nothing in order to import into excel or R nicely--this added find and replace only takes a second.
+  file-write ?1 file-write ","  ;; can delete "file-write ","" if you want a space separated file. As it stands, you'll probably have to go into the .csv file and replace all of the " with nothing in order to import into excel or R nicely--this added find and replace only takes a second.
   ]
   file-print "" file-print ""
 ]
@@ -193,7 +147,6 @@ if length list-of-hearths-on-surface > 99 and length list-of-hearths-excavated >
 ;]
 file-close
 ]
-
 
 if experiment = "excavation-5";; 5 random test units across the landscape
 [
@@ -209,15 +162,13 @@ ask turtles with [hearth_age <= item 0 sediment_ages]
 [
   set list-of-hearths-on-surface fput hearth_age list-of-hearths-on-surface
 ]
-
-file-open "HMODEL13_excavation-5_200_5.csv"
-
+set-current-directory user-directory ;; allow user to set output file directory
+file-open "HMODELexcavation-5_200_5.csv" ;;edit this filename for your experiments
 if length list-of-hearths-on-surface > 99 and length list-of-hearths-excavated >= 0
 [
   let sample-hearths n-of 100 sentence (list-of-hearths-on-surface) (list-of-hearths-excavated)
   set sample-hearths sort sample-hearths ;;this sorts them in ascending order
 ;;show sample-hearths
-
   set-plot-pen-mode 2  ;;this plots to the interface
   let y 1
   foreach sample-hearths
@@ -225,7 +176,6 @@ if length list-of-hearths-on-surface > 99 and length list-of-hearths-excavated >
    plotxy ?1 y
    set y y + 1
   ]
-
   foreach sample-hearths  ;;this writes it out to the .csv file
   [ ?1 ->
   file-write ?1 file-write ","  ;;you can delete "file-write ","" if you want a space separated file. As it stands, you'll probably have to go into the .csv file and replace all of the " with nothing in order to import into excel or R nicely--this added find and replace only takes a second.
@@ -236,9 +186,6 @@ if length list-of-hearths-on-surface > 99 and length list-of-hearths-excavated >
 ; error "There were less than 100 hearths."  ;;custom run-time error
 ;]
 file-close
-
-
-
 
 end
 @#$#@#$#@
@@ -351,8 +298,8 @@ SLIDER
 seed
 seed
 0
-100
-999.0
+1000
+500.0
 1
 1
 NIL
